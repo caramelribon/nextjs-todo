@@ -8,6 +8,7 @@ const Button = (props: ButtonProps) => {
     className,
     color = "blue",
     size = "small",
+    onClick,
     children,
     ...rest
   } = props;
@@ -21,6 +22,7 @@ const Button = (props: ButtonProps) => {
         styles[color],
         styles[size]
       )}
+      onClick={onClick}
       {...rest}
     >
       {children}

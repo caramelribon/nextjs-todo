@@ -5,4 +5,5 @@ import { Size } from "../../../types/Size.types";
 export type ButtonProps = JSX.IntrinsicElements["button"] & {
   size?: Size;
   color?: Color;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
