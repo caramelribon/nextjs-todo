@@ -1,5 +1,7 @@
 .checkbox {
-  padding-left: 2.9rem;
+  width: 2.1rem;
+  height: 2.1rem;
+  margin-right: 2.4rem;
 
   .checkbox__input {
     position: absolute;
@@ -28,9 +30,6 @@
 
   .checkbox__span {
     position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
     border: 1px solid var(--white2);
     width: 2.1rem;
     height: 2.1rem;
