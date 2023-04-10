@@ -1,7 +1,12 @@
-import styles from "./page.module.css";
+"use client";
+import { Main } from "./components";
 
 const Home = () => {
-  return <main className={styles.main}></main>;
+  return (
+    <Main>
+      <h1>TOD</h1>
+    </Main>
+  );
 };
 
 export default Home;

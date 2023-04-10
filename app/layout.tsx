@@ -1,4 +1,5 @@
 import "./styles/globals.css";
+import styles from "./styles/app.module.scss";
 
 export const metadata = {
   title: "NextJs Todo App",

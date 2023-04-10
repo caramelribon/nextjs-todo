@@ -1,0 +1,8 @@
+.main {
+  margin: 9.6rem auto 0;
+  width: 64rem;
+
+  @media screen and (max-width: 480px) {
+    width: calc(100% - 16px * 2);
+  }
+}
