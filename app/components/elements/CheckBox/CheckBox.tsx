@@ -12,7 +12,7 @@ const CheckBox = (props: CheckBoxProps) => {
         className={classNames(className, styles.checkbox__input)}
         {...rest}
       />
-      <span className={styles.checkbox__span}></span>
+      <span className={classNames(className, styles.checkbox__span)}></span>
     </label>
   );
 };

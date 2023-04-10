@@ -1,0 +1,31 @@
+.item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .item__checkbox,
+  .item__date {
+    flex-shrink: 0;
+  }
+
+  .item__checkbox,
+  .item__date,
+  .item__note {
+    margin-right: 2.4rem;
+  }
+  .item__date {
+    width: 14.4rem;
+  }
+  .item__note {
+    width: 38.2rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .item__deleteButton {
+    border: none;
+    background-color: white;
+    cursor: pointer;
+  }
+}
