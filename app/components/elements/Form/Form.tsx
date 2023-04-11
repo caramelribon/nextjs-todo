@@ -3,8 +3,10 @@ import classNames from "classnames";
 import { FormProps } from "./Form.types";
 
 const Form = (props: FormProps) => {
-  const { className, label = "メモ", ...rest } = props;
-
+  const { className, label = "メモ", onChange, ...rest } = props;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e);
+  }
   return (
     <div className={classNames(styles.form, className)}>
       <label
@@ -15,7 +17,7 @@ const Form = (props: FormProps) => {
       >
         {label}
       </label>
-      <input type="text" className={styles.input} {...rest} />
+      <input type="text" className={styles.input} onChange={handleChange} {...rest} />
     </div>
   );
 };

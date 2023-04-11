@@ -10,12 +10,18 @@
     .mt48 {
       text-align: center;
       margin: 4.8rem auto 0;
-      
+
       .link {
         font-weight: 600;
         color: var(--blue);
         text-decoration-line: underline;
       }
+    }
+    .error {
+      margin-top: 2.4rem;
+      font-size: 1rem;
+      text-align: center;
+      color: #f00;
     }
   }
 }
