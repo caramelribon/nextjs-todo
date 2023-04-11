@@ -3,34 +3,43 @@ import { Form, Button, Main, Title } from "../components";
 import styles from "./page.module.scss";
 import Link from "next/link";
 import userFunc from "../../src/repository/user";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User } from "../types/User.types";
 import { FirebaseError } from "firebase/app";
+import { useAuthContext } from "@/src/context/authContext";
+import { useRouter } from "next/navigation";
 
 const LogIn = () => {
-  const [user, setUser] = useState<Omit<User, "id" | "name">>({
+  const { user } = useAuthContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user !== null) router.push("/");
+  }, [user, router]);
+
+  const [userData, setUserData] = useState<Omit<User, "id" | "name">>({
     email: "",
     password: "",
   });
   const [error, setError] = useState("");
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUser({ ...user, email: e.target.value });
+    setUserData({ ...userData, email: e.target.value });
   };
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUser({ ...user, password: e.target.value });
+    setUserData({ ...userData, password: e.target.value });
   };
 
   const userSignIn = async () => {
     // バリデーションチェック
     if (
-      !user.email.match(
+      !userData.email.match(
         /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
       )
     ) {
       setError("メールアドレスの形式が正しくありません");
     }
-    if (!user.password.length) {
+    if (!userData.password.length) {
       setError("パスワードを入力してください");
     }
     if (error !== "") {
@@ -39,10 +48,9 @@ const LogIn = () => {
     }
 
     try {
-      const uid = await userFunc.signIn(user.email, user.password);
+      const uid = await userFunc.signIn(userData.email, userData.password);
       if (typeof uid === "string") {
-        const userData = await userFunc.getUser(uid);
-        console.log(userData);
+        // const userData = await userFunc.getUser(uid);
       }
       alert("ログインしました");
     } catch (err) {
