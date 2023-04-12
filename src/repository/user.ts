@@ -55,4 +55,12 @@ async function getUser(id: string) {
   }
 }
 
-export default { signUp, signIn, setUser, getUser };
+async function signOut() {
+  try {
+    await auth.signOut();
+  } catch (error) {
+    throw error;
+  }
+}
+
+export default { signUp, signIn, setUser, getUser, signOut };

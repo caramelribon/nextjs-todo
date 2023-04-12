@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
 import todoFunc from "../src/repository/todo";
+import userFunc from "../src/repository/user";
 import { Todo } from "./types/Todo.types";
 
 const radioLabels = [
@@ -62,6 +63,11 @@ const Home = () => {
     }
   };
 
+  const signOut = async () => {
+    await userFunc.signOut();
+    alert("ログアウトしました");
+  };
+
   return (
     <Main>
       <div className={styles.top__wrapper}>
@@ -107,7 +113,7 @@ const Home = () => {
               className={styles.mt48}
               color="blue"
               size="large"
-              onClick={addTodo}
+              onClick={signOut}
             >
               ログアウト
             </Button>
