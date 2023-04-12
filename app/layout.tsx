@@ -1,4 +1,6 @@
 import "./styles/globals.css";
+import styles from "./styles/app.module.scss";
+import { AuthProvider } from "../src/context/authContext";
 
 export const metadata = {
   title: "NextJs Todo App",
@@ -8,7 +10,9 @@ export const metadata = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="ja">
-      <body>{children}</body>
+      <body>
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 };
