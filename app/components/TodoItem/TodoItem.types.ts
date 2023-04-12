@@ -1,8 +1,4 @@
+import { Todo } from "../../types/Todo.types";
 export type TodoItemProps = {
-  item: {
-    id: string;
-    date: Date;
-    note: string;
-    isDone: boolean;
-  };
+  item: Todo;
 };
