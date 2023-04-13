@@ -16,7 +16,6 @@ const radioLabels = [
 
 const Home = () => {
   const { user } = useAuthContext();
-  console.log(user);
   const router = useRouter();
   const [todos, setTodos] = useState<Todo[] | []>([]);
   const [showTodos, setShowTodos] = useState<Todo[] | []>([]);
@@ -27,17 +26,12 @@ const Home = () => {
     if (user !== null) {
       const fetchData = async () => {
         const todosData = await todoFunc.getTodos(user.id);
-        // console.log(todosData);
         setTodos(todosData);
         setShowTodos(todosData);
       };
       fetchData();
     }
   }, [user]);
-
-  // useEffect(() => {
-  //   console.log(todos);
-  // }, [todos]);
 
   useEffect(() => {
     const selectTodos = todos.filter((todo) => {
@@ -83,7 +77,6 @@ const Home = () => {
       if (!newTodo) return;
       setTodos([...todos, newTodo]);
       setInputValue("");
-      console.log(newTodo);
     }
   };
 

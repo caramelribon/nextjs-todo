@@ -47,7 +47,6 @@ async function getTodos(userId: string): Promise<Todo[]> {
     }
     const todosCollectionRef = collection(userDocRef, "todos");
     const todosQuerySnapshot = await getDocs(query(todosCollectionRef));
-    console.log(todosQuerySnapshot.docs);
     const todos = todosQuerySnapshot.docs.map((doc) => {
       const docData = doc.data();
       return { id: doc.id, ...docData, date: docData.date.toDate() } as Todo;

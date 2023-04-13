@@ -41,7 +41,6 @@ export function AuthProvider({ children }: Props) {
           name: userData.name,
           email: userCredential.email || "",
         });
-        // console.log(user);
       } else {
         setUser(null);
       }
