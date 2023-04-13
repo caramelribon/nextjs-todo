@@ -6,15 +6,16 @@ import { useState } from "react";
 import Trash from "../../assets/icons/trash.svg";
 
 const TodoItem = (props: TodoItemProps) => {
-  const { item, ...rest } = props;
+  const { item, onChange, deleteTodo, ...rest } = props;
   const date = DateTime(item.date);
   const [isChecked, setIsChecked] = useState(item.isDone);
 
   const handleIsChecked = () => {
     setIsChecked(!isChecked);
+    onChange(item);
   };
   const deleteTodoItem = () => {
-    console.log("deleteTodoItem");
+    deleteTodo(item);
   };
 
   return (
