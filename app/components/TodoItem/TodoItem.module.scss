@@ -3,6 +3,10 @@
   justify-content: center;
   align-items: center;
 
+  &:not(:first-child) {
+    margin-top: 1.6rem;
+  }
+
   .item__checkbox,
   .item__date {
     flex-shrink: 0;

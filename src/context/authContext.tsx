@@ -34,17 +34,14 @@ export function AuthProvider({ children }: Props) {
   useEffect(() => {
     onAuthStateChanged(auth, async (userCredential) => {
       if (userCredential) {
-        console.log(userCredential);
         const userData = await userFunc.getUser(userCredential.uid);
         if (!userData) return;
-        console.log(userData);
         setUser({
           id: userCredential.uid,
           name: userData.name,
           email: userCredential.email || "",
         });
-        console.log("ここ");
-        console.log(user);
+        // console.log(user);
       } else {
         setUser(null);
       }

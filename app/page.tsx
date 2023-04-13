@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
 import todoFunc from "../src/repository/todo";
+import userFunc from "../src/repository/user";
 import { Todo } from "./types/Todo.types";
 
 const radioLabels = [
@@ -19,32 +20,54 @@ const Home = () => {
   const router = useRouter();
   const [todos, setTodos] = useState<Todo[] | []>([]);
   const [showTodos, setShowTodos] = useState<Todo[] | []>([]);
+  const [selectValue, setSelectValue] = useState<string>("all");
 
   useEffect(() => {
     if (user === null) router.push("/login");
     if (user !== null) {
       const fetchData = async () => {
         const todosData = await todoFunc.getTodos(user.id);
+        // console.log(todosData);
         setTodos(todosData);
+        setShowTodos(todosData);
       };
       fetchData();
     }
-  }, [user, router]);
+  }, [user]);
 
-  const [selectValue, setSelectValue] = useState<string>("all");
-  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectValue(e.target.value);
+  // useEffect(() => {
+  //   console.log(todos);
+  // }, [todos]);
+
+  useEffect(() => {
     const selectTodos = todos.filter((todo) => {
-      if (e.target.value === "all") return todo;
-      if (e.target.value === "incomplete") return todo.isDone === false;
-      if (e.target.value === "complete") return todo.isDone === true;
+      if (selectValue === "all") return todo;
+      if (selectValue === "incomplete") return todo.isDone === false;
+      if (selectValue === "complete") return todo.isDone === true;
     });
     setShowTodos(selectTodos);
+  }, [selectValue, todos]);
+
+  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectValue(e.target.value);
   };
 
   const [inputValue, setInputValue] = useState<string>("");
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
+  };
+
+  const handleStateChange = async (id: string) => {
+    if (user !== null) {
+      await todoFunc.changeTodoState(user.id, id);
+      const allTodos = todos.map((todo) => {
+        if (todo.id === id) {
+          return { ...todo, isDone: !todo.isDone };
+        }
+        return todo;
+      });
+      setTodos(allTodos);
+    }
   };
 
   const addTodo = async () => {
@@ -59,7 +82,22 @@ const Home = () => {
       });
       if (!newTodo) return;
       setTodos([...todos, newTodo]);
+      setInputValue("");
+      console.log(newTodo);
     }
+  };
+
+  const deleteTodo = async (id: string) => {
+    if (user !== null) {
+      await todoFunc.deleteTodo(user.id, id);
+      const allTodos = todos.filter((todo) => todo.id !== id);
+      setTodos(allTodos);
+    }
+  };
+
+  const signOut = async () => {
+    await userFunc.signOut();
+    alert("ログアウトしました");
   };
 
   return (
@@ -83,7 +121,12 @@ const Home = () => {
             </div>
             <div className={styles.list__wrapper}>
               {showTodos.map((todo) => (
-                <TodoItem key={todo.id} item={todo} />
+                <TodoItem
+                  key={todo.id}
+                  item={todo}
+                  onChange={(todo: Todo) => handleStateChange(todo.id)}
+                  deleteTodo={(todo: Todo) => deleteTodo(todo.id)}
+                />
               ))}
             </div>
             <Title className={styles.mt48} title="新しい作業の追加" tag="h2" />
@@ -107,7 +150,7 @@ const Home = () => {
               className={styles.mt48}
               color="blue"
               size="large"
-              onClick={addTodo}
+              onClick={signOut}
             >
               ログアウト
             </Button>

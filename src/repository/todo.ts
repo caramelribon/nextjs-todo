@@ -9,6 +9,7 @@ import {
   deleteDoc,
   collection,
   query,
+  serverTimestamp,
 } from "firebase/firestore";
 import { Todo } from "../../app/types/Todo.types";
 
@@ -22,13 +23,12 @@ async function setTodo(userId: string, todo: Omit<Todo, "id">) {
       throw new Error("User not found");
     }
 
-    const todosCollectionRef = collection(userDocRef, "todos");
-    const todosQuerySnapshot = await getDocs(todosCollectionRef);
-    if (todosQuerySnapshot.empty) {
-      await setDoc(todosCollectionRef.doc(), { created: true });
-    }
+    const todosCollectionRef = collection(db, `users/${userId}/todos`);
 
-    const newTodoDocRef = await addDoc(todosCollectionRef, todo);
+    const newTodoDocRef = await addDoc(todosCollectionRef, {
+      ...todo,
+      date: serverTimestamp(),
+    });
     return {
       id: newTodoDocRef.id,
       ...todo,
@@ -47,9 +47,10 @@ async function getTodos(userId: string): Promise<Todo[]> {
     }
     const todosCollectionRef = collection(userDocRef, "todos");
     const todosQuerySnapshot = await getDocs(query(todosCollectionRef));
+    console.log(todosQuerySnapshot.docs);
     const todos = todosQuerySnapshot.docs.map((doc) => {
       const docData = doc.data();
-      return { id: doc.id, ...docData } as Todo;
+      return { id: doc.id, ...docData, date: docData.date.toDate() } as Todo;
     });
     return todos;
   } catch (error) {
@@ -58,15 +59,20 @@ async function getTodos(userId: string): Promise<Todo[]> {
   }
 }
 
-async function completeTodo(userId: string, todoId: string) {
+async function changeTodoState(userId: string, todoId: string) {
   try {
     const userDocRef = doc(db, "users", userId);
     const userDoc = await getDoc(userDocRef);
     if (!userDoc.exists()) {
       throw new Error("User not found");
     }
-    const todosCollectionDocRef = doc(userDocRef, "todos", todoId);
-    await setDoc(todosCollectionDocRef, { isDone: true });
+    const todoRef = doc(userDocRef, "todos", todoId);
+    const todoDoc = await getDoc(todoRef);
+    if (!todoDoc.exists()) {
+      throw new Error("Todo not found");
+    }
+    const todoData = todoDoc.data();
+    await setDoc(todoRef, { ...todoData, isDone: !todoData.isDone });
   } catch (error) {
     console.log(error);
   }
@@ -86,4 +92,4 @@ async function deleteTodo(userId: string, todoId: string) {
   }
 }
 
-export default { setTodo, getTodos, completeTodo, deleteTodo };
+export default { setTodo, getTodos, changeTodoState, deleteTodo };
