@@ -29,23 +29,21 @@ export function useAuthContext() {
 
 export function AuthProvider({ children }: Props) {
   const [user, setUser] = useState<Omit<User, "password"> | null>(null);
-  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     onAuthStateChanged(auth, async (userCredential) => {
       if (userCredential) {
         const userData = await userFunc.getUser(userCredential.uid);
+        console.log(userData);
         if (!userData) return;
         setUser({
           id: userCredential.uid,
           name: userData.name,
           email: userCredential.email || "",
         });
-        // console.log(user);
       } else {
         setUser(null);
       }
-      //   setLoading(false);
     });
   }, []);
 

@@ -48,8 +48,18 @@ async function setUser(user: Omit<User, "email" | "password">) {
 async function getUser(id: string) {
   try {
     const docRef = doc(db, "users", id);
-    const userData = await getDoc(docRef);
-    return userData.data();
+    const userDoc = await getDoc(docRef);
+    if (!userDoc.exists()) {
+      throw new Error("User not found");
+    }
+    const { name } = userDoc.data();
+    if (name === undefined) {
+      throw new Error("Invalid data");
+    }
+    if (typeof name !== "string") {
+      throw new Error("Invalid data");
+    }
+    return { name: name };
   } catch (error) {
     return null;
   }

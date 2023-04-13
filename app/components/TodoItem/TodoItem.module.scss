@@ -19,6 +19,10 @@
   }
   .item__date {
     width: 14.4rem;
+    
+    @media screen and (max-width: 480px) {
+      width: 9.6rem;
+    }
   }
   .item__note {
     width: 38.2rem;

@@ -1,5 +1,13 @@
 "use client";
-import { Main, Title, RadioButton, TodoItem, Form, Button } from "./components";
+import {
+  Main,
+  Title,
+  RadioButton,
+  TodoItem,
+  Form,
+  Button,
+  ColumTitle,
+} from "./components";
 import { useAuthContext } from "../src/context/authContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,19 +23,28 @@ const radioLabels = [
 ];
 
 const Home = () => {
+  // userの状態管理
   const { user } = useAuthContext();
-  console.log(user);
   const router = useRouter();
+
+  // todoの状態管理
   const [todos, setTodos] = useState<Todo[] | []>([]);
+
+  // 表示するtodoの状態管理
   const [showTodos, setShowTodos] = useState<Todo[] | []>([]);
+
+  // ラジオボタンの状態管理
   const [selectValue, setSelectValue] = useState<string>("all");
 
+  // 入力フォームの状態管理
+  const [inputValue, setInputValue] = useState<string>("");
+
+  // ログインしていない場合はログインページに遷移
   useEffect(() => {
     if (user === null) router.push("/login");
     if (user !== null) {
       const fetchData = async () => {
         const todosData = await todoFunc.getTodos(user.id);
-        // console.log(todosData);
         setTodos(todosData);
         setShowTodos(todosData);
       };
@@ -35,10 +52,7 @@ const Home = () => {
     }
   }, [user]);
 
-  // useEffect(() => {
-  //   console.log(todos);
-  // }, [todos]);
-
+  // ラジオボタンの状態によって表示するtodoを変更
   useEffect(() => {
     const selectTodos = todos.filter((todo) => {
       if (selectValue === "all") return todo;
@@ -48,15 +62,12 @@ const Home = () => {
     setShowTodos(selectTodos);
   }, [selectValue, todos]);
 
+  // ラジオボタンの状態を変更
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectValue(e.target.value);
   };
 
-  const [inputValue, setInputValue] = useState<string>("");
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
+  // todoの状態を変更
   const handleStateChange = async (id: string) => {
     if (user !== null) {
       await todoFunc.changeTodoState(user.id, id);
@@ -70,6 +81,21 @@ const Home = () => {
     }
   };
 
+  // todoを削除
+  const deleteTodo = async (id: string) => {
+    if (user !== null) {
+      await todoFunc.deleteTodo(user.id, id);
+      const allTodos = todos.filter((todo) => todo.id !== id);
+      setTodos(allTodos);
+    }
+  };
+
+  // 入力フォームの状態を変更
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  // todoを追加
   const addTodo = async () => {
     if (inputValue === "") {
       return;
@@ -83,18 +109,10 @@ const Home = () => {
       if (!newTodo) return;
       setTodos([...todos, newTodo]);
       setInputValue("");
-      console.log(newTodo);
     }
   };
 
-  const deleteTodo = async (id: string) => {
-    if (user !== null) {
-      await todoFunc.deleteTodo(user.id, id);
-      const allTodos = todos.filter((todo) => todo.id !== id);
-      setTodos(allTodos);
-    }
-  };
-
+  // ログアウト
   const signOut = async () => {
     await userFunc.signOut();
     alert("ログアウトしました");
@@ -119,15 +137,18 @@ const Home = () => {
                 />
               ))}
             </div>
-            <div className={styles.list__wrapper}>
-              {showTodos.map((todo) => (
-                <TodoItem
-                  key={todo.id}
-                  item={todo}
-                  onChange={(todo: Todo) => handleStateChange(todo.id)}
-                  deleteTodo={(todo: Todo) => deleteTodo(todo.id)}
-                />
-              ))}
+            <div className={styles.mt24}>
+              <ColumTitle />
+              <div className={styles.mt16}>
+                {showTodos.map((todo) => (
+                  <TodoItem
+                    key={todo.id}
+                    item={todo}
+                    onChange={(todo: Todo) => handleStateChange(todo.id)}
+                    deleteTodo={(todo: Todo) => deleteTodo(todo.id)}
+                  />
+                ))}
+              </div>
             </div>
             <Title className={styles.mt48} title="新しい作業の追加" tag="h2" />
             <div className={styles.form__wrapper}>

@@ -10,30 +10,39 @@ import { useAuthContext } from "@/src/context/authContext";
 import { useRouter } from "next/navigation";
 
 const SignUp = () => {
+  // userの状態管理
   const { user } = useAuthContext();
   const router = useRouter();
 
-  useEffect(() => {
-    if (user !== null) router.push("/");
-  }, [user, router]);
-
+  // ログインフォームの状態管理
   const [userData, setUserData] = useState<Omit<User, "id">>({
     email: "",
     password: "",
     name: "",
   });
+
+  // エラーメッセージの状態管理
   const [error, setError] = useState("");
 
+  // ログインしていたらトップページに遷移
+  useEffect(() => {
+    if (user !== null) router.push("/");
+  }, [user]);
+
+  // フォームの状態を変更(メールアドレス)
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserData({ ...userData, email: e.target.value });
   };
+  // フォームの状態を変更(パスワード)
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserData({ ...userData, password: e.target.value });
   };
+  // フォームの状態を変更(名前)
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserData({ ...userData, name: e.target.value });
   };
 
+  // サインアップ処理
   const userSignUp = async () => {
     setError("");
     if (
