@@ -10,6 +10,7 @@ import {
   collection,
   query,
   serverTimestamp,
+  Timestamp,
 } from "firebase/firestore";
 import { Todo } from "../../app/types/Todo.types";
 
@@ -48,8 +49,23 @@ async function getTodos(userId: string): Promise<Todo[]> {
     const todosCollectionRef = collection(userDocRef, "todos");
     const todosQuerySnapshot = await getDocs(query(todosCollectionRef));
     const todos = todosQuerySnapshot.docs.map((doc) => {
-      const docData = doc.data();
-      return { id: doc.id, ...docData, date: docData.date.toDate() } as Todo;
+      const { note, date, isDone } = doc.data();
+      if (note === undefined || date === undefined || isDone === undefined) {
+        throw new Error("Invalid data");
+      }
+      if (
+        typeof note !== "string" ||
+        typeof isDone !== "boolean" ||
+        !(date instanceof Timestamp)
+      ) {
+        throw new Error("Invalid data");
+      }
+      return {
+        id: doc.id,
+        note: note,
+        isDone: isDone,
+        date: date.toDate(),
+      };
     });
     return todos;
   } catch (error) {
@@ -70,8 +86,18 @@ async function changeTodoState(userId: string, todoId: string) {
     if (!todoDoc.exists()) {
       throw new Error("Todo not found");
     }
-    const todoData = todoDoc.data();
-    await setDoc(todoRef, { ...todoData, isDone: !todoData.isDone });
+    const { note, date, isDone } = todoDoc.data();
+    if (note === undefined || date === undefined || isDone === undefined) {
+      throw new Error("Invalid data");
+    }
+    if (
+      typeof note !== "string" ||
+      typeof isDone !== "boolean" ||
+      !(date instanceof Timestamp)
+    ) {
+      throw new Error("Invalid data");
+    }
+    await setDoc(todoRef, { ...todoDoc.data(), isDone: !isDone });
   } catch (error) {
     console.log(error);
   }
