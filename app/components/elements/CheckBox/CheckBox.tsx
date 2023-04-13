@@ -3,9 +3,9 @@ import classNames from "classnames";
 import { CheckBoxProps } from "./CheckBox.types";
 
 const CheckBox = (props: CheckBoxProps) => {
-  const { className, isChecked = false,  ...rest } = props;
+  const { className, isChecked = false, ...rest } = props;
   return (
-    <label className={styles.checkbox}>
+    <label className={classNames(className, styles.checkbox)}>
       <input
         type="checkbox"
         checked={isChecked}

@@ -10,26 +10,36 @@ import { useAuthContext } from "@/src/context/authContext";
 import { useRouter } from "next/navigation";
 
 const LogIn = () => {
+  // userの状態管理
   const { user } = useAuthContext();
   const router = useRouter();
 
-  useEffect(() => {
-    if (user !== null) router.push("/");
-  }, [user, router]);
-
+  // ログインフォームの状態管理
   const [userData, setUserData] = useState<Omit<User, "id" | "name">>({
     email: "",
     password: "",
   });
+
+  // エラーメッセージの状態管理
   const [error, setError] = useState("");
 
+
+  // ログインしている場合はトップページに遷移
+  useEffect(() => {
+    if (user !== null) router.push("/");
+  }, [user]);
+
+  // フォームの状態を変更(メールアドレス)
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserData({ ...userData, email: e.target.value });
   };
+
+  // フォームの状態を変更(パスワード)
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserData({ ...userData, password: e.target.value });
   };
 
+  // ログイン処理
   const userSignIn = async () => {
     // バリデーションチェック
     if (
@@ -48,10 +58,7 @@ const LogIn = () => {
     }
 
     try {
-      const uid = await userFunc.signIn(userData.email, userData.password);
-      if (typeof uid === "string") {
-        // const userData = await userFunc.getUser(uid);
-      }
+      await userFunc.signIn(userData.email, userData.password);
       alert("ログインしました");
     } catch (err) {
       if (err instanceof FirebaseError) {
